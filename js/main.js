@@ -43,6 +43,7 @@ export class Main {
     if (window.canvas) {
       config.canvas = window.canvas;
     }
+
     // @ts-ignore
     var game = new Phaser.Game(config);
 
