@@ -6,6 +6,7 @@
 // import DataBus from './databus'
 
 import "./libs/phaser";
+import * as dragonBones from "./libs/dragonBones/dragonBones";
 import { LoaderScene } from "./scene/LoaderScene";
 
 export const DPR = Number(window.devicePixelRatio.toFixed(1));
@@ -31,6 +32,15 @@ export class Main {
       // autoCenter: Phaser.Scale.CENTER_BOTH,
       dom: {
         createContainer: true
+      },
+      plugins: {
+        scene: [
+          {
+            key: "DragonBones",
+            plugin: dragonBones.phaser.plugin.DragonBonesScenePlugin,
+            mapping: "dragonbone",
+          }
+        ]
       },
       backgroundColor: "#4488aa",
       fps: {
