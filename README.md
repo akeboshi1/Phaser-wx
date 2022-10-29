@@ -1,1 +1,1 @@
-## phaser3 for wx game test
+## phaser3 for wechat game test demo
