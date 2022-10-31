@@ -49,7 +49,7 @@ export class LoaderScene extends Phaser.Scene {
 
         this.mArmatureDisplay.x = this.cameras.main.centerX;
         this.mArmatureDisplay.y = this.cameras.main.centerY + 200;
-        this.mArmatureDisplay.scale = 2;
+        this.mArmatureDisplay.scale = 3;
 
         this.input.setDraggable(con);
         this.input.on("pointerdown", this.pointerDownHandler, this);
@@ -64,25 +64,34 @@ export class LoaderScene extends Phaser.Scene {
         // this.img.rotation += 10;
     }
 
-    pointerDownHandler() {
+    pointerDownHandler(pointer) {
         if (this.tween && this.tween.callbacks) {
             this.tween.destroy();
             this.tween = null;
-            this.mArmatureDisplay.setScale(2);
         }
         this.tween = this.tweens.add({
             targets: this.mArmatureDisplay,
-            scale: 4,
-            ease: 'Bounce',
-            yoyo: true,
-            duraton: 10000
+            x: pointer.x,
+            y: pointer.y,
+            // scale: 4,
+            ease: 'line',
+            duraton: 1000,
+            // 此处只能用箭头方法，如果用this调用callback会因为作用域问题导致微信小游戏第三方报错
+            onComplete: ()=>{
+                this.mArmatureDisplay.animation.play("idle");
+            }
         });
-        this.mArmatureDisplay.animation.play("attack");
+        this.mArmatureDisplay.animation.play("walk");
     }
+
+    // 废弃
+    // tweenCallBack() {
+    //     this.mArmatureDisplay.animation.play("idle");
+    // }
 
 
     pointerUpHandler() {
-        this.mArmatureDisplay.animation.play("idle");
+        // this.mArmatureDisplay.animation.play("idle");
     }
 
     pointerMoveHandler(pointer, gameObject, dragX, dragY) {
