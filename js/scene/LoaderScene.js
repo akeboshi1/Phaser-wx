@@ -5,7 +5,7 @@ export class LoaderScene extends Phaser.Scene {
 
     preload() {
         // this.load.setBaseURL("http://127.0.0.1:64438/");
-        this.load.image("testpng","images/bullet.png");
+        this.load.image("testpng", "images/bullet.png");
         // this.load.image("star", "https://osd-alpha.tooqing.com/avatar/part/barm_weap_61d7de0ebdc7560011839ac7_1_2.png");
         // this.load.image("dragonbone","images/dragonbones/bones_human01_tex.png");
         // this.load.json("json", "images/dragonbones/bones_human01_tex.json");
@@ -32,7 +32,7 @@ export class LoaderScene extends Phaser.Scene {
         const con = this.make.container();
         this.img = this.add.image(0, 0, "testpng");
         con.add(this.img);
-        con.setSize(this.img.width,this.img.height);
+        con.setSize(this.img.width, this.img.height);
         con.setInteractive();
 
 
@@ -56,7 +56,7 @@ export class LoaderScene extends Phaser.Scene {
         this.input.on("pointerup", this.pointerUpHandler, this);
         // this.input.on("pointermove", this.pointerMoveHandler, this);
 
-        this.input.on("drag", this.pointerMoveHandler,this);
+        this.input.on("drag", this.pointerMoveHandler, this);
     }
 
     update() {
@@ -65,15 +65,28 @@ export class LoaderScene extends Phaser.Scene {
     }
 
     pointerDownHandler() {
+        if (this.tween && this.tween.callbacks) {
+            this.tween.destroy();
+            this.tween = null;
+            this.mArmatureDisplay.setScale(2);
+        }
+        this.tween = this.tweens.add({
+            targets: this.mArmatureDisplay,
+            scale: 4,
+            ease: 'Bounce',
+            yoyo: true,
+            duraton: 10000
+        });
         this.mArmatureDisplay.animation.play("attack");
     }
+
 
     pointerUpHandler() {
         this.mArmatureDisplay.animation.play("idle");
     }
 
-    pointerMoveHandler(pointer, gameObject, dragX, dragY){
-       gameObject.x = pointer.x;
-       gameObject.y = pointer.y;
+    pointerMoveHandler(pointer, gameObject, dragX, dragY) {
+        gameObject.x = pointer.x;
+        gameObject.y = pointer.y;
     }
 }
