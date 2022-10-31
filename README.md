@@ -7,5 +7,5 @@ v3.6.0
    - JsonFile 本地加载逻辑调整
    - BinaryFile 本地加载逻辑调整
 2. Input
-   - 由于做了交互的适配，场景点击时up/downElement会获取不到，所以做了交互的逻辑调整
+   - 由于做了交互的适配，场景交互时交互的Element是没有赋值的，所以在wx环境下，交互element的判断逻辑做了适配
 
