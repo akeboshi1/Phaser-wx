@@ -1,3 +1,5 @@
+import { UIScene } from "./UIScene";
+
 export class LoaderScene extends Phaser.Scene {
     constructor() {
         super();
@@ -35,6 +37,12 @@ export class LoaderScene extends Phaser.Scene {
         con.setSize(this.img.width, this.img.height);
         con.setInteractive();
 
+        let scene = this.game.scene.getScene("UIScene");
+        if (!scene) {
+            this.game.scene.add("UIScene", UIScene, false);
+        }
+
+
 
         // this.add.image(500,500,"star");
 
@@ -50,7 +58,7 @@ export class LoaderScene extends Phaser.Scene {
         this.mArmatureDisplay.x = this.cameras.main.centerX;
         this.mArmatureDisplay.y = this.cameras.main.centerY + 200;
         this.mArmatureDisplay.scale = 3;
-
+        this.scene.launch(UIScene.name, {display:this.mArmatureDisplay});
         this.input.setDraggable(con);
         this.input.on("pointerdown", this.pointerDownHandler, this);
         this.input.on("pointerup", this.pointerUpHandler, this);
@@ -77,7 +85,7 @@ export class LoaderScene extends Phaser.Scene {
             ease: 'line',
             duraton: 1000,
             // 此处只能用箭头方法，如果用this调用callback会因为作用域问题导致微信小游戏第三方报错
-            onComplete: ()=>{
+            onComplete: () => {
                 this.mArmatureDisplay.animation.play("idle");
             }
         });
