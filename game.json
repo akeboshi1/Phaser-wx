@@ -1,3 +1,10 @@
 {
-    "deviceOrientation": "portrait"
+    "deviceOrientation": "portrait",
+    "subPackages": [
+      {
+        "independent": true,
+        "name": "dragonBones",
+        "root": "/js/dragonBones/" 
+      }
+    ]
 }
