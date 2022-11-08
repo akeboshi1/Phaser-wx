@@ -1,13 +1,15 @@
-import { UIScene } from "./UIScene";
+import { HEIGHT, WIDTH } from "../main";
 
 export class LoaderScene extends Phaser.Scene {
     constructor() {
         super();
+        this.key = "LOADERSCENE"
     }
 
     preload() {
         // this.load.setBaseURL("http://127.0.0.1:64438/");
         this.load.image("testpng", "images/bullet.png");
+        this.load.image("bg", "images/bg.jpg");
         // this.load.image("star", "https://osd-alpha.tooqing.com/avatar/part/barm_weap_61d7de0ebdc7560011839ac7_1_2.png");
         // this.load.image("dragonbone","images/dragonbones/bones_human01_tex.png");
         // this.load.json("json", "images/dragonbones/bones_human01_tex.json");
@@ -31,22 +33,28 @@ export class LoaderScene extends Phaser.Scene {
     }
 
     create() {
-        const con = this.make.container();
-        this.img = this.add.image(0, 0, "testpng");
-        con.add(this.img);
-        con.setSize(this.img.width, this.img.height);
-        con.setInteractive();
 
-        let scene = this.game.scene.getScene("UIScene");
-        if (!scene) {
-            this.game.scene.add("UIScene", UIScene, false);
-        }
+        const bg = this.add.image(0, 0, "bg");
+        bg.setScale(3, 5);
+        this.con = this.make.container();
+        this.con.setPosition(300, 300);
+        this.img = this.add.image(0, 0, "testpng");
+        this.con.add(this.img);
+        this.con.setSize(this.img.width, this.img.height);
+        this.con.setScale(3);
+        this.con.setInteractive();
+
+        // let scene = this.game.scene.getScene("UIScene");
+        // if (!scene) {
+        //     this.game.scene.add("UIScene", UIScene, false);
+        // }
 
 
 
         // this.add.image(500,500,"star");
 
         // this.add.image(800,500,"dragonbone");
+
 
         this.mArmatureDisplay = this.add.armature(
             "Armature",
@@ -58,8 +66,27 @@ export class LoaderScene extends Phaser.Scene {
         this.mArmatureDisplay.x = this.cameras.main.centerX;
         this.mArmatureDisplay.y = this.cameras.main.centerY + 200;
         this.mArmatureDisplay.scale = 3;
-        this.scene.launch(UIScene.name, {display:this.mArmatureDisplay});
-        this.input.setDraggable(con);
+
+        this.dragonBones = [];
+        for (let i = 0; i < 100; i++) {
+            const dragonBone = this.add.armature(
+                "Armature",
+                "bones_human01",
+            );
+            dragonBone.setDepth(1);
+            const num = Math.random();
+            const posRandom = num > 0.5 ? 1 : -1;
+            dragonBone.x = this.cameras.main.centerX + posRandom * Math.random() * WIDTH/2;
+            dragonBone.y = this.cameras.main.centerY + posRandom * Math.random() * HEIGHT/2;
+            const action = num > 0.5 ? "walk" : "attack";
+            dragonBone.animation.play(action)
+            // this.dragonBones.push(dragonBone);
+        }
+
+
+
+        this.scene.launch("UISCENE", { display: this.mArmatureDisplay });
+        this.input.setDraggable(this.con);
         this.input.on("pointerdown", this.pointerDownHandler, this);
         this.input.on("pointerup", this.pointerUpHandler, this);
         // this.input.on("pointermove", this.pointerMoveHandler, this);
@@ -68,8 +95,8 @@ export class LoaderScene extends Phaser.Scene {
     }
 
     update() {
-        // if (this.img.rotation >= 360) this.img.rotation = 0;
-        // this.img.rotation += 10;
+        if (this.con.rotation >= 360) this.con.rotation = 0;
+        this.con.rotation += 10;
     }
 
     pointerDownHandler(pointer) {

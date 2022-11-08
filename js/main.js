@@ -7,10 +7,11 @@
 
 import "./libs/phaser.min.js";
 import { LoaderScene } from "./scene/LoaderScene";
+import { UIScene } from "./scene/UIScene";
 
 export const DPR = Number(window.devicePixelRatio.toFixed(1));
-const WIDTH = Math.round(window.innerWidth * DPR)
-const HEIGHT = Math.round(window.innerHeight * DPR)
+export const WIDTH = Math.round(window.innerWidth * DPR)
+export const HEIGHT = Math.round(window.innerHeight * DPR)
 export class Main {
   constructor() {
     const self = this;
@@ -33,6 +34,7 @@ export class Main {
     var config = {
       type: Phaser.WEBGL,
       parent: "phaser-example",
+      scene:[LoaderScene],
       scale: {
         mode: Phaser.Scale.NONE,
         // autoCenter: Phaser.Scale.CENTER_BOTH,
@@ -73,7 +75,7 @@ export class Main {
     var game = new Phaser.Game(config);
 
     // 切换不同的scene演示不同的ui组件 
-    game.scene.add("uiScene", LoaderScene, true, { x: 0, y: 0 });
+     game.scene.add("UISCENE", UIScene, false, { x: 0, y: 0 });
   }
 
 
