@@ -5,7 +5,7 @@
 // import Music from './runtime/music'
 // import DataBus from './databus'
 
-import "./libs/phaser";
+import "./libs/phaser.min.js";
 import { LoaderScene } from "./scene/LoaderScene";
 
 export const DPR = Number(window.devicePixelRatio.toFixed(1));

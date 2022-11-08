@@ -1,1 +1,1 @@
-export * from "./dragonBones.js";
+export * from "./dragonBones.min.js";
