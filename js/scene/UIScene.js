@@ -4,6 +4,7 @@ export class UIScene extends Phaser.Scene {
     constructor() {
         super();
         this.key = UISCENE;
+        this.init();
         // console.log("uiscene init");
     }
     init(data) {
@@ -35,11 +36,46 @@ export class UIScene extends Phaser.Scene {
         this.mAttackBtn.fillStyle(0xffcc00, 1);
         this.mAttackBtn.fillRect(0, 0, 100, 100).setInteractive(new Phaser.Geom.Rectangle(0, 0, 100, 100), Phaser.Geom.Rectangle.Contains);
         this.mAttackBtn.on("pointerdown", this.pointerAttackHandler, this);
+
+
+        this.mShareBtn = this.add.graphics({ x: 300, y: 50 });
+        this.mShareBtn.fillStyle(0xffffff, 1);
+        this.mShareBtn.fillRect(0, 0, 100, 100).setInteractive(new Phaser.Geom.Rectangle(0, 0, 100, 100), Phaser.Geom.Rectangle.Contains);
+        this.mShareBtn.on("pointerdown", this.pointerShareHandler, this);
     }
 
     update() {
 
     }
+
+
+
+
+    init() {
+        wx.showShareMenu({
+            withShareTicket: true,
+            menus: ['shareAppMessage', 'shareTimeline']
+        });
+
+        wx.onShareAppMessage(() => {
+            return {
+                // 标题，不传则默认使用小游戏的名称
+                title: "邀您一起来嗨！",
+
+                // 转发链接所显示的图片，比例5:4，资源可以是本地或远程。不传则默认使用游戏截图。           
+                // imageUrl: "shareImage.png"
+            }
+        });
+        console.log("share game --->");
+    }
+
+    pointerShareHandler() {
+        wx.shareAppMessage({
+            title: "邀您一起来嗨！",
+            success:(res)=>{ console.log("share game success--->");}
+        });
+    }
+
 
     pointerDownHandler() {
         if (this.dragonbone) this.dragonbone.scaleX *= -1;
