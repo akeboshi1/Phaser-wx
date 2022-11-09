@@ -1,9 +1,9 @@
-import { HEIGHT, WIDTH } from "../main";
+import { HEIGHT, LOADERSCENE, UISCENE, WIDTH } from "../main";
 
 export class LoaderScene extends Phaser.Scene {
     constructor() {
         super();
-        this.key = "LOADERSCENE"
+        this.key = LOADERSCENE;
     }
 
     preload() {
@@ -24,8 +24,6 @@ export class LoaderScene extends Phaser.Scene {
             { responseType: "arraybuffer" }
         );
 
-
-        // this.load.atlas();
     }
 
     init() {
@@ -44,17 +42,6 @@ export class LoaderScene extends Phaser.Scene {
         this.con.setScale(3);
         this.con.setInteractive();
 
-        // let scene = this.game.scene.getScene("UIScene");
-        // if (!scene) {
-        //     this.game.scene.add("UIScene", UIScene, false);
-        // }
-
-
-
-        // this.add.image(500,500,"star");
-
-        // this.add.image(800,500,"dragonbone");
-
 
         this.mArmatureDisplay = this.add.armature(
             "Armature",
@@ -68,24 +55,40 @@ export class LoaderScene extends Phaser.Scene {
         this.mArmatureDisplay.scale = 3;
 
         this.dragonBones = [];
-        for (let i = 0; i < 100; i++) {
+        this.actions = ["idle", "walk", "attack", "run"];
+        for (let i = 0; i < 10; i++) {
             const dragonBone = this.add.armature(
                 "Armature",
                 "bones_human01",
             );
             dragonBone.setDepth(1);
-            const num = Math.random();
-            const posRandom = num > 0.5 ? 1 : -1;
-            dragonBone.x = this.cameras.main.centerX + posRandom * Math.random() * WIDTH/2;
-            dragonBone.y = this.cameras.main.centerY + posRandom * Math.random() * HEIGHT/2;
-            const action = num > 0.5 ? "walk" : "attack";
+            const randomX = Math.random() > 0.5 ? 1 : -1;
+            const randomY = Math.random() > 0.5 ? 1 : -1;
+            dragonBone.x = this.cameras.main.centerX + randomX * Math.random() * WIDTH / 2;
+            dragonBone.y = this.cameras.main.centerY + randomY * Math.random() * HEIGHT / 2;
+
+            const action = this.actions[Math.floor(Math.random() * this.actions.length)];
             dragonBone.animation.play(action)
-            // this.dragonBones.push(dragonBone);
+            this.dragonBones.push(dragonBone);
         }
 
 
+        this.dragonBones.forEach((dragonBone) => {
+            this.tweens.add({
+                targets: dragonBone,
+                // rotation: Math.PI*2,
+                scale:2,
+                ease: 'Sine',
+                duraton: 1000,
+                yoyo: true,
+                repeat: -1
+            });
+        });
 
-        this.scene.launch("UISCENE", { display: this.mArmatureDisplay });
+
+        const uiScene = this.game.scene.getScene(UISCENE);
+        uiScene.events.on("attack", this.fire, this);
+        this.scene.launch(UISCENE, { display: this.mArmatureDisplay });
         this.input.setDraggable(this.con);
         this.input.on("pointerdown", this.pointerDownHandler, this);
         this.input.on("pointerup", this.pointerUpHandler, this);
@@ -97,6 +100,28 @@ export class LoaderScene extends Phaser.Scene {
     update() {
         if (this.con.rotation >= 360) this.con.rotation = 0;
         this.con.rotation += 10;
+    }
+
+    fire() {
+        const base = new Phaser.Geom.Point(this.mArmatureDisplay.x, this.mArmatureDisplay.y);
+        let self = this;
+        this.dragonBones.forEach((dragonBone) => {
+            const bullect = self.make.image({ key: "testpng" });
+            bullect.setPosition(this.mArmatureDisplay.x, this.mArmatureDisplay.y);
+            const angle = Math.atan2((dragonBone.y - this.mArmatureDisplay.y), (dragonBone.x - this.mArmatureDisplay.x)) * 180 / Math.PI - 270;
+            bullect.angle = angle;
+            this.tweens.add({
+                targets: bullect,
+                x: dragonBone.x,
+                y: dragonBone.y,
+                ease: 'line',
+                duraton: 200,
+                onComplete: () => {
+                    bullect.destroy();
+                }
+            });
+        });
+        console.log("fire--->");
     }
 
     pointerDownHandler(pointer) {
@@ -118,12 +143,6 @@ export class LoaderScene extends Phaser.Scene {
         });
         this.mArmatureDisplay.animation.play("walk");
     }
-
-    // 废弃
-    // tweenCallBack() {
-    //     this.mArmatureDisplay.animation.play("idle");
-    // }
-
 
     pointerUpHandler() {
         // this.mArmatureDisplay.animation.play("idle");

@@ -12,6 +12,8 @@ import { UIScene } from "./scene/UIScene";
 export const DPR = Number(window.devicePixelRatio.toFixed(1));
 export const WIDTH = Math.round(window.innerWidth * DPR)
 export const HEIGHT = Math.round(window.innerHeight * DPR)
+export const LOADERSCENE = "loaderScene";
+export const UISCENE = "uiScene";
 export class Main {
   constructor() {
     const self = this;
@@ -73,9 +75,7 @@ export class Main {
 
     // @ts-ignore
     var game = new Phaser.Game(config);
-
-    // 切换不同的scene演示不同的ui组件 
-     game.scene.add("UISCENE", UIScene, false, { x: 0, y: 0 });
+     game.scene.add(UISCENE, UIScene, false, { x: 0, y: 0 });
   }
 
 
