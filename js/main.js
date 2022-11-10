@@ -8,7 +8,7 @@
 import "./libs/phaser.min.js";
 import { LoaderScene } from "./scene/LoaderScene";
 import { UIScene } from "./scene/UIScene";
-
+import { worker } from '../game';
 export const DPR = Number(window.devicePixelRatio.toFixed(1));
 export const WIDTH = Math.round(window.innerWidth * DPR)
 export const HEIGHT = Math.round(window.innerHeight * DPR)
@@ -21,7 +21,8 @@ export class Main {
       name: 'dragonBones', // 下载其他分包
       success(res) {
         import("dragonBones/game.js").then((dragonBones) => {
-          self.init(dragonBones);
+        
+  self.init(dragonBones);
         });
         console.log('load moduleA success', res)
       },
@@ -36,7 +37,7 @@ export class Main {
     var config = {
       type: Phaser.WEBGL,
       parent: "phaser-example",
-      scene:[LoaderScene],
+      scene: [LoaderScene],
       scale: {
         mode: Phaser.Scale.NONE,
         // autoCenter: Phaser.Scale.CENTER_BOTH,
@@ -75,7 +76,12 @@ export class Main {
 
     // @ts-ignore
     var game = new Phaser.Game(config);
-     game.scene.add(UISCENE, UIScene, false, { x: 0, y: 0 });
+    game.scene.add(UISCENE, UIScene, false, { x: 0, y: 0 });
+
+    worker.postMessage({
+      msg: 'hello worker'
+    })
+
   }
 
 

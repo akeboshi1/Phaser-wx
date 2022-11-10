@@ -63,7 +63,7 @@ export class UIScene extends Phaser.Scene {
                 title: "邀您一起来嗨！",
 
                 // 转发链接所显示的图片，比例5:4，资源可以是本地或远程。不传则默认使用游戏截图。           
-                // imageUrl: "shareImage.png"
+                imageUrl: "images/bg.jpg"
             }
         });
         console.log("share game --->");
@@ -72,7 +72,8 @@ export class UIScene extends Phaser.Scene {
     pointerShareHandler() {
         wx.shareAppMessage({
             title: "邀您一起来嗨！",
-            success:(res)=>{ console.log("share game success--->");}
+            imageUrl: "images/bg.jpg",
+            success: (res) => { console.log("share game success--->"); }
         });
     }
 

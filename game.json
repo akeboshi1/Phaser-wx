@@ -1,5 +1,6 @@
 {
     "deviceOrientation": "portrait",
+    "workers": "js/worker",
     "subPackages": [
       {
         "independent": true,
