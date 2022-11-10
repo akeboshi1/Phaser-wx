@@ -6,6 +6,7 @@ v3.55.2
    - ImageFile 本地加载逻辑调整
    - JsonFile 本地加载逻辑调整
    - BinaryFile 本地加载逻辑调整
+   - AudioFIle 本地加载逻辑调整
 2. Input
    - 由于做了交互的适配，场景交互时交互的Element是没有赋值的，所以在wx环境下对交互的element调整了判断逻辑
 3. ScenePlugin
