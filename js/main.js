@@ -5,7 +5,7 @@
 // import Music from './runtime/music'
 // import DataBus from './databus'
 
-import "../lib/phaser.min.js";
+import "./libs/phaser.min";
 import { LoaderScene } from "./scene/LoaderScene";
 import { UIScene } from "./scene/UIScene";
 import { worker } from '../game';
