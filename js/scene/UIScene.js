@@ -47,7 +47,7 @@ export class UIScene extends Phaser.Scene {
         // con.on("pointerdown", this.pointerDownHandler, this);
 
 
-        this.sfx = this.sound.add('remoteSound');
+        this.sfx = this.sound.add('bgSound');
         this.sfx.play({ loop: true });
         this.mBackground = this.add.graphics({ x: 100, y: 50 });
         this.mBackground.fillStyle(0x0000, 1);
