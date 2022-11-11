@@ -32,8 +32,8 @@ export class UIScene extends Phaser.Scene {
 
     preload() {
         this.load.image("btn", "images/bullet.png", { wechatDebug: true });
-        this.load.audio('bgSound', 'images/mp3/explore1.mp3', undefined, { wechatDebug: true });
-        // this.load.audio('remoteSound', 'https://akeboshi1.github.io/Jay/publish/assets/Jay%20demo%201.mp3');
+        // this.load.audio('bgSound', 'images/mp3/explore1.mp3', undefined, { wechatDebug: true });
+        this.load.audio('remoteSound', 'https://akeboshi1.github.io/Jay/publish/assets/Jay%20demo%201.mp3');
     }
     create() {
         // console.log("uiscene create");
@@ -47,7 +47,7 @@ export class UIScene extends Phaser.Scene {
         // con.on("pointerdown", this.pointerDownHandler, this);
 
 
-        this.sfx = this.sound.add('bgSound');
+        this.sfx = this.sound.add('remoteSound');
         this.sfx.play({ loop: true });
         this.mBackground = this.add.graphics({ x: 100, y: 50 });
         this.mBackground.fillStyle(0x0000, 1);
