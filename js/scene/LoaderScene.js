@@ -8,9 +8,9 @@ export class LoaderScene extends Phaser.Scene {
 
     preload() {
         // this.load.setBaseURL("http://127.0.0.1:64438/");
-        this.load.image("testpng", "images/bullet.png");
-        this.load.image("bg", "images/bg.jpg");
-        // this.load.image("star", "https://osd-alpha.tooqing.com/avatar/part/barm_weap_61d7de0ebdc7560011839ac7_1_2.png");
+        this.load.image("testpng", "images/bullet.png", { wechatDebug: true });
+        this.load.image("bg", "images/bg.jpg", { wechatDebug: true });
+        this.load.image("star", "https://osd-alpha.tooqing.com/avatar/part/barm_weap_61d7de0ebdc7560011839ac7_1_2.png");
         // this.load.image("dragonbone","images/dragonbones/bones_human01_tex.png");
         // this.load.json("json", "images/dragonbones/bones_human01_tex.json");
         // this.load.binary("bind", "images/dragonbones/bones_human01_ske.dbbin");
@@ -19,9 +19,9 @@ export class LoaderScene extends Phaser.Scene {
             "images/dragonbones/bones_human01_tex.png",
             "images/dragonbones/bones_human01_tex.json",
             "images/dragonbones/bones_human01_ske.dbbin",
-            null,
-            null,
-            { responseType: "arraybuffer" }
+            { wechatDebug: true },
+            { wechatDebug: true },
+            { responseType: "arraybuffer", wechatDebug: true }
         );
 
     }
@@ -41,7 +41,7 @@ export class LoaderScene extends Phaser.Scene {
         this.con.setSize(this.img.width, this.img.height);
         this.con.setScale(3);
         this.con.setInteractive();
-
+        this.add.image(600 ,20, "star");
 
         this.mArmatureDisplay = this.add.armature(
             "Armature",
@@ -77,7 +77,7 @@ export class LoaderScene extends Phaser.Scene {
             this.tweens.add({
                 targets: dragonBone,
                 // rotation: Math.PI*2,
-                scale:2,
+                scale: 2,
                 ease: 'Sine',
                 duraton: 1000,
                 yoyo: true,
