@@ -1,4 +1,5 @@
 import { UISCENE } from "../main";
+import Music from "../utils/music";
 
 export class UIScene extends Phaser.Scene {
     constructor() {
@@ -33,7 +34,7 @@ export class UIScene extends Phaser.Scene {
     preload() {
         this.load.image("btn", "images/bullet.png", { wechatDebug: true });
         // this.load.audio('bgSound', 'images/mp3/explore1.mp3', undefined, { wechatDebug: true });
-        this.load.audio('remoteSound', 'https://akeboshi1.github.io/Jay/publish/assets/Jay%20demo%201.mp3');
+        // this.load.audio('remoteSound', 'https://akeboshi1.github.io/Jay/publish/assets/Jay%20demo%201.mp3');
     }
     create() {
         // console.log("uiscene create");
@@ -46,9 +47,10 @@ export class UIScene extends Phaser.Scene {
         // con.setInteractive();
         // con.on("pointerdown", this.pointerDownHandler, this);
 
-
-        this.sfx = this.sound.add('remoteSound');
-        this.sfx.play({ loop: true });
+        // this.sound.pauseOnBlur = false;
+        // this.sfx = this.sound.add('remoteSound');
+        // this.sfx.play({ loop: true });
+        this.music = new Music();
         this.mBackground = this.add.graphics({ x: 100, y: 50 });
         this.mBackground.fillStyle(0x0000, 1);
         this.mBackground.fillRect(0, 0, 100, 100).setInteractive(new Phaser.Geom.Rectangle(0, 0, 100, 100), Phaser.Geom.Rectangle.Contains);
@@ -78,9 +80,9 @@ export class UIScene extends Phaser.Scene {
 
     pointerMusicHandler() {
         if (!this.pause) {
-            this.sfx.pause();
+            this.music.pauseBgm();
         } else {
-            this.sfx.play();
+            this.music.resumeBgm();
         }
         this.pause = !this.pause;
     }

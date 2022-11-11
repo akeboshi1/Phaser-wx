@@ -21,8 +21,8 @@ export class Main {
       name: 'dragonBones', // 下载其他分包
       success(res) {
         import("dragonBones/game.js").then((dragonBones) => {
-        
-  self.init(dragonBones);
+
+          self.init(dragonBones);
         });
         console.log('load moduleA success', res)
       },
@@ -36,6 +36,9 @@ export class Main {
   init(dragonBones) {
     var config = {
       type: Phaser.WEBGL,
+      audio: {
+        disableWebAudio: true
+      },
       parent: "phaser-example",
       scene: [LoaderScene],
       scale: {
