@@ -8,6 +8,7 @@ export class LoaderScene extends Phaser.Scene {
 
     preload() {
         // this.load.setBaseURL("http://127.0.0.1:64438/");
+        this.load.atlas("loading", "images/loading.png", "images/loading.json", { wechatDebug: true }, { wechatDebug: true });
         this.load.image("testpng", "images/bullet.png", { wechatDebug: true });
         this.load.image("bg", "images/bg.jpg", { wechatDebug: true });
         this.load.image("star", "https://osd-alpha.tooqing.com/avatar/part/barm_weap_61d7de0ebdc7560011839ac7_1_2.png");
@@ -31,18 +32,31 @@ export class LoaderScene extends Phaser.Scene {
     }
 
     create() {
+        // sprite
+        this.anims.create({
+            key: "loading_anis",
+            frames: this.anims.generateFrameNames("loading", { prefix: "loading_", start: 1, end: 3, zeroPad: 1, suffix: ".png" }),
+            frameRate: 5,
+            repeat: -1
+        });
 
+        this.testBG = this.add.sprite(50, 50, "loading").setScale(1);
+        this.testBG.play("loading_anis");
+
+        // image
         const bg = this.add.image(0, 0, "bg");
         bg.setScale(3, 5);
+        bg.visible = false;
         this.con = this.make.container();
         this.con.setPosition(300, 300);
         this.img = this.add.image(0, 0, "testpng");
-        this.con.add(this.img);
+        this.con.add(this.img, this.testBG);
         this.con.setSize(this.img.width, this.img.height);
         this.con.setScale(3);
         this.con.setInteractive();
-        this.add.image(600 ,20, "star");
+        this.add.image(600, 20, "star");
 
+        // dragonbones
         this.mArmatureDisplay = this.add.armature(
             "Armature",
             "bones_human01",
