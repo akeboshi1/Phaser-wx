@@ -47,9 +47,15 @@ export class UIScene extends Phaser.Scene {
         // con.setInteractive();
         // con.on("pointerdown", this.pointerDownHandler, this);
 
-        this.sfx = this.sound.add('bgSound');
-        this.sfx.play({ loop: true });
-        // this.music = new Music();
+        if(wx){
+            this.sfx = wx.createInnerAudioContext();
+            this.sfx.src = "images/mp3/bgm.mp3";
+            this.sfx.play();
+        }else{
+            this.sfx = this.sound.add('bgSound');
+            this.sfx.play({ loop: true });
+        }
+       
         this.mBackground = this.add.graphics({ x: 100, y: 50 });
         this.mBackground.fillStyle(0x0000, 1);
         this.mBackground.fillRect(0, 0, 100, 100).setInteractive(new Phaser.Geom.Rectangle(0, 0, 100, 100), Phaser.Geom.Rectangle.Contains);

@@ -19,19 +19,15 @@ export default class Music {
     // this.boomAudio = new Audio()
     // this.boomAudio.src = 'audio/boom.mp3'
 
-    this.playBgm()
+    this.play()
   }
 
-  playBgm() {
+  play() {
     this.bgmAudio.play()
   }
 
-  pauseBgm(){
+  pause(){
     this.bgmAudio.pause();
-  }
-
-  resumeBgm(){
-    this.bgmAudio.play();
   }
 
   playShoot() {
