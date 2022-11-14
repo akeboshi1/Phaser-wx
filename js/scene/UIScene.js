@@ -70,6 +70,7 @@ export class UIScene extends Phaser.Scene {
         this.mMusicBtn.fillStyle(0x00ff00, 1);
         this.mMusicBtn.fillRect(0, 0, 100, 100).setInteractive(new Phaser.Geom.Rectangle(0, 0, 100, 100), Phaser.Geom.Rectangle.Contains);
         this.mMusicBtn.on("pointerdown", this.pointerMusicHandler, this);
+        
     }
 
     update() {
@@ -78,11 +79,11 @@ export class UIScene extends Phaser.Scene {
 
 
     pointerMusicHandler() {
-        // if (!this.pause) {
-        //     this.music.pauseBgm();
-        // } else {
-        //     this.music.resumeBgm();
-        // }
+        if (!this.pause) {
+            this.sfx.pause();
+        } else {
+            this.sfx.play();
+        }
         this.pause = !this.pause;
     }
 

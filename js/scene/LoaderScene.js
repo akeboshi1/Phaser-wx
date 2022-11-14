@@ -107,7 +107,6 @@ export class LoaderScene extends Phaser.Scene {
         this.input.on("pointerdown", this.pointerDownHandler, this);
         this.input.on("pointerup", this.pointerUpHandler, this);
         // this.input.on("pointermove", this.pointerMoveHandler, this);
-
         this.input.on("drag", this.pointerMoveHandler, this);
     }
 
