@@ -33,8 +33,8 @@ export class UIScene extends Phaser.Scene {
 
     preload() {
         this.load.image("btn", "images/bullet.png", { wechatDebug: true });
-        this.load.audio('bgSound', 'images/mp3/bgm.mp3', undefined, { wechatDebug: true });
-        // this.load.audio('remoteSound', 'https://akeboshi1.github.io/Jay/publish/assets/Jay%20demo%201.mp3');
+        //this.load.audio('bgSound', 'images/mp3/bgm.mp3', undefined, { wechatDebug: true });
+        this.load.audio('remoteSound', 'https://akeboshi1.github.io/Jay/publish/assets/Jay%20demo%201.mp3');
     }
     create() {
         // console.log("uiscene create");
@@ -49,7 +49,8 @@ export class UIScene extends Phaser.Scene {
 
         if(wx){
             this.sfx = wx.createInnerAudioContext();
-            this.sfx.src = "images/mp3/bgm.mp3";
+            this.sfx.src = "https://akeboshi1.github.io/Jay/publish/assets/Jay%20demo%201.mp3";
+            this.sfx.loop =true;
             this.sfx.play();
         }else{
             this.sfx = this.sound.add('bgSound');
