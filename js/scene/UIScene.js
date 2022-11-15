@@ -49,7 +49,7 @@ export class UIScene extends Phaser.Scene {
 
         if(wx){
             this.sfx = wx.createInnerAudioContext();
-            this.sfx.src = "https://akeboshi1.github.io/Jay/publish/assets/Jay%20demo%201.mp3";
+            this.sfx.src = this.game.cache.audio.get("remoteSound");//"https://akeboshi1.github.io/Jay/publish/assets/Jay%20demo%201.mp3";
             this.sfx.loop =true;
             this.sfx.play();
         }else{
