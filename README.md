@@ -17,4 +17,4 @@ v3.55.2
 ## 微信
 1. 微信分包加载逻辑
 2. 微信worker功能由于只能通过主包加载，所以对其大小有所限制，导致worker功能偏弱
-3. 利用小游戏api创建innerAudioContext播放音乐,来代替phaser3中的音效实现
+3. 由于HTMLAudioElement运行时存在卡顿，延迟等问题，所以利用小游戏api创建innerAudioContext播放音乐,来代替phaser3中的音效实现
