@@ -1,4 +1,4 @@
-import "../lib/phaser";
+import "./libs/phaser.min";
 import Maze from './objects/maze'
 import Tank from './objects/tank'
 import Barrel from './objects/barrel'

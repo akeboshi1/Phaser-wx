@@ -1,6 +1,5 @@
-import "../lib/phaser";
+import "./libs/phaser.min";
 import {TankGame} from "./TankGame";
-
 
 export const TASKGAME = "TASKGAME";
 export const DPR = Number(window.devicePixelRatio.toFixed(1));
