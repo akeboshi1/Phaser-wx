@@ -1,262 +1,253 @@
-// import Player from './player/index'
-// import Enemy from './npc/enemy'
-// import BackGround from './runtime/background'
-// import GameInfo from './runtime/gameinfo'
-// import Music from './runtime/music'
-// import DataBus from './databus'
+import "../lib/phaser";
+import WebpackLoader from './libs/webpackloader'
+import AssetManifest from './assetManifest'
+import Maze from './objects/maze'
+import Tank from './objects/tank'
+import Barrel from './objects/barrel'
+import Crate from './objects/crate'
+import Raycaster from "./raycaster/Raycaster.js"
 
-import "./libs/phaser.min";
-import { LoaderScene } from "./scene/LoaderScene";
-import { UIScene } from "./scene/UIScene";
-import { worker } from '../game';
-export const DPR = Number(window.devicePixelRatio.toFixed(1));
-export const WIDTH = Math.round(window.innerWidth * DPR)
-export const HEIGHT = Math.round(window.innerHeight * DPR)
-export const LOADERSCENE = "loaderScene";
-export const UISCENE = "uiScene";
-export class Main {
-  constructor() {
-    const self = this;
-    wx.loadSubpackage({
-      name: 'dragonBones', // 下载其他分包
-      success(res) {
-        import("dragonBones/game.js").then((dragonBones) => {
-
-          self.init(dragonBones);
-        });
-        console.log('load moduleA success', res)
-      },
-      fail(err) {
-        console.error('load moduleA fail', err)
-      }
-      // export const assetsDPR = roundHalf(Math.min(Math.max(HEIGHT / 360, 1), 4))
-    })
-  }
-
-  init(dragonBones) {
-    var config = {
-      type: Phaser.WEBGL,
-      parent: "phaser-example",
-      scene: [LoaderScene],
-      scale: {
-        mode: Phaser.Scale.NONE,
-        // autoCenter: Phaser.Scale.CENTER_BOTH,
-        width: WIDTH,
-        height: HEIGHT,
-        zoom: 1 / DPR,
-      },
-      render: {
-        pixelArt: true,
-        roundPixels: true,
-      },
-      // autoCenter: Phaser.Scale.CENTER_BOTH,
-      dom: {
-        createContainer: true
-      },
-      plugins: {
-        scene: [
-          {
-            key: "DragonBones",
-            plugin: dragonBones.phaser.plugin.DragonBonesScenePlugin,
-            mapping: "dragonbone",
-          }
-        ]
-      },
-      backgroundColor: "#4488aa",
-      fps: {
-        target: 60,
-        forceSetTimeOut: true
-      }
-      //pipeline: { "Color": ColorShaderPipeline }
-    };
-
-    if (window.canvas) {
-      config.canvas = window.canvas;
+class TankGame extends Phaser.Scene {
+    constructor(config) {
+        super(config)
     }
 
-    // @ts-ignore
-    var game = new Phaser.Game(config);
-    game.scene.add(UISCENE, UIScene, false, { x: 0, y: 0 });
+    preload() {
+        this.load.scenePlugin('WebpackLoader', WebpackLoader, 'loader', 'loader')
+    }
 
-    worker.postMessage({
-      msg: 'hello worker'
-    })
+    create() {
+        this.loader.start(AssetManifest)
+        this.loader.load().then((config, addToScene) => {
+            this.sound.unlock()
 
-  }
+            this.anims.create({
+                key: 'explosion',
+                frames: this.anims.generateFrameNames('atlas', {
+                    prefix: 'explosion',
+                    start: 1,
+                    end: 5,
+                }),
+                frameRate: 24,
+                repeat: 0,
+            })
 
+            const tileSize = {
+                x: 200,
+                y: 200,
+            }
+            const mazeSize = {
+                x: Phaser.Math.RND.between(5, 12),
+                y: Phaser.Math.RND.between(3, 9),
+            }
 
+            this.fitCameraToRect({
+                    x: 0,
+                    y: 0,
+                    width: tileSize.x * mazeSize.x,
+                    height: tileSize.y * mazeSize.y,
+                },
+                200,
+            )
 
+            let tracksResolutionDivider = 0.75 / this.cameras.main.zoom
+            this.floorRenderTexture = this.add.renderTexture(0, 0, mazeSize.x * tileSize.x / tracksResolutionDivider, mazeSize.y * tileSize.y / tracksResolutionDivider)
+            this.floorRenderTexture.setScale(tracksResolutionDivider)
+            this.floorRenderTexture.fill(0x9393bf, 1)
 
+            this.maze = new Maze(this, mazeSize.x, mazeSize.y, tileSize.x, tileSize.y)
+            this.add.existing(this.maze)
 
+            this.tanks = []
+            const spawnTank = (color = 'blue', inputKeys) => {
+                const tankSpawn = {
+                    x: Phaser.Math.RND.between(0, mazeSize.x - 1) * tileSize.x + tileSize.x * 0.5,
+                    y: Phaser.Math.RND.between(0, mazeSize.y - 1) * tileSize.y + tileSize.y * 0.5,
+                }
 
+                const tank = new Tank(this, tankSpawn.x, tankSpawn.y, color, inputKeys)
+                tank.setAngle(Phaser.Math.RND.angle())
+                this.add.existing(tank)
+                this.tanks.push(tank)
+            }
 
-  // const ctx = canvas.getContext('2d')
-  // const databus = new DataBus()
+            this.barrels = []
+            const spawnBarrel = () => {
+                const barrelSpawn = {
+                    x: Phaser.Math.RND.between(0, mazeSize.x - 1) * tileSize.x + tileSize.x * 0.5
+                        + Phaser.Math.RND.between(-tileSize.x * 0.33, tileSize.x * 0.33),
+                    y: Phaser.Math.RND.between(0, mazeSize.y - 1) * tileSize.y + tileSize.y * 0.5
+                        + Phaser.Math.RND.between(-tileSize.y * 0.33, tileSize.y * 0.33),
+                }
 
-  /**
-   * 游戏主函数
-   */
-  // export default class Main {
-  //   constructor() {
-  //     // 维护当前requestAnimationFrame的id
-  //     this.aniId = 0
+                const barrel = new Barrel(this, barrelSpawn.x, barrelSpawn.y)
+                barrel.setAngle(Phaser.Math.RND.angle())
+                this.add.existing(barrel)
+                this.barrels.push(barrel)
+            }
 
-  //     this.restart()
-  //   }
+            this.crates = []
+            const spawnCrate = () => {
+                const crateSpawn = {
+                    x: Phaser.Math.RND.between(0, mazeSize.x - 1) * tileSize.x + tileSize.x * 0.5,
+                    y: Phaser.Math.RND.between(0, mazeSize.y - 1) * tileSize.y + tileSize.y * 0.5,
+                }
 
-  //   restart() {
-  //     databus.reset()
+                const crate = new Crate(this, crateSpawn.x, crateSpawn.y)
+                this.add.existing(crate)
+                this.crates.push(crate)
+            }
 
-  //     canvas.removeEventListener(
-  //       'touchstart',
-  //       this.touchHandler
-  //     )
+            // spawnTank('red', {
+            //     up: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W),
+            //     left: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A),
+            //     down: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S),
+            //     right: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D),
+            //     fire: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE),
+            // })
+            spawnTank('blue', {
+                up: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP),
+                left: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT),
+                down: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN),
+                right: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT),
+                fire: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT),
+            })
 
-  //     this.bg = new BackGround(ctx)
-  //     this.player = new Player(ctx)
-  //     this.gameinfo = new GameInfo()
-  //     this.music = new Music()
+            for (let i = 0; i < Math.pow(mazeSize.x * mazeSize.y, 0.5) + Phaser.Math.RND.between(-2, 3); i++) {
+                spawnBarrel()
+            }
 
-  //     this.bindLoop = this.loop.bind(this)
-  //     this.hasEventBind = false
+            for (let i = 0; i < Math.pow(mazeSize.x * mazeSize.y, 0.2); i++) {
+                spawnCrate()
+            }
 
-  //     // 清除上一局的动画
-  //     window.cancelAnimationFrame(this.aniId)
+            this.raycaster = new Raycaster()
+            this.maze.walls.forEach(wall => {
+                this.raycaster.addObstacle(wall)
+            })
+            this.maze.pillars.forEach(pillar => {
+                this.raycaster.addObstacle(pillar)
+            })
+            this.tanks.forEach(tank => {
+                this.raycaster.addObstacle(tank)
+            })
+            this.barrels.forEach(barrel => {
+                this.raycaster.addObstacle(barrel)
+            })
+            this.crates.forEach(crate => {
+                this.raycaster.addObstacle(crate)
+            })
 
-  //     this.aniId = window.requestAnimationFrame(
-  //       this.bindLoop,
-  //       canvas
-  //     )
-  //   }
+            const floorDecal = this.add.rectangle(0, 0, 20, 20, 0x000000, 0.1)
+            for (let i = 0; i < mazeSize.x * mazeSize.y * 3; i++) {
+                floorDecal.setPosition(Phaser.Math.RND.realInRange(0, mazeSize.x * tileSize.x), Phaser.Math.RND.realInRange(0, mazeSize.y * tileSize.y))
+                floorDecal.setAngle(Phaser.Math.RND.angle())
+                floorDecal.setScale(Phaser.Math.RND.between(1, 5))
+                floorDecal.setAlpha(Phaser.Math.RND.realInRange(0, 0.5))
+                this.floorRenderTexture.draw(floorDecal)
+            }
+            floorDecal.destroy()
 
-  //   /**
-  //    * 随着帧数变化的敌机生成逻辑
-  //    * 帧数取模定义成生成的频率
-  //    */
-  //   enemyGenerate() {
-  //     if (databus.frame % 30 === 0) {
-  //       const enemy = databus.pool.getItemByClass('enemy', Enemy)
-  //       enemy.init(6)
-  //       databus.enemys.push(enemy)
-  //     }
-  //   }
+            this.explosionParticles = this.add.particles('atlas', 'oilSpill_small')
+            this.laserParticles = this.add.particles('star')
 
-  //   // 全局碰撞检测
-  //   collisionDetection() {
-  //     const that = this
+            this.input.keyboard.addKey('r').on('down', () => {
+                this.input.keyboard.removeAllKeys()
+                this.sound.stopAll()
+                this.tweens.killAll()
+                this.raycaster.clearObstacle()
+                this.scene.restart()
+            })
 
-  //     databus.bullets.forEach((bullet) => {
-  //       for (let i = 0, il = databus.enemys.length; i < il; i++) {
-  //         const enemy = databus.enemys[i]
+            this.debug = this.add.text(-22, -90, '', {font: '64px Roboto', fill: '#2f2c23'})
 
-  //         if (!enemy.isPlaying && enemy.isCollideWith(bullet)) {
-  //           enemy.playAnimation()
-  //           that.music.playExplosion()
+            this.scale.on('resize', (gameSize, baseSize, displaySize, resolution) => {
+                this.fitCameraToRect({
+                        x: 0,
+                        y: 0,
+                        width: tileSize.x * mazeSize.x,
+                        height: tileSize.y * mazeSize.y,
+                    },
+                    200,
+                    500,
+                )
+            })
+            this.loaded = true
+        })
+    }
 
-  //           bullet.visible = false
-  //           databus.score += 1
+    update(time, delta) {
+        if (this.loaded) {
+            this.debug.setText([
+                'FPS: ' + this.game.loop.actualFps.toFixed(2),
+            ])
+            this.tanks.forEach(tank => {
+                this.raycaster.updateObstacle(tank)
+            })
+            this.barrels.forEach(barrel => {
+                this.raycaster.updateObstacle(barrel)
+            })
+            this.crates.forEach(crate => {
+                this.raycaster.updateObstacle(crate)
+            })
+        }
+    }
 
-  //           break
-  //         }
-  //       }
-  //     })
-
-  //     for (let i = 0, il = databus.enemys.length; i < il; i++) {
-  //       const enemy = databus.enemys[i]
-
-  //       if (this.player.isCollideWith(enemy)) {
-  //         databus.gameOver = true
-
-  //         break
-  //       }
-  //     }
-  //   }
-
-  //   // 游戏结束后的触摸事件处理逻辑
-  //   touchEventHandler(e) {
-  //     e.preventDefault()
-
-  //     const x = e.touches[0].clientX
-  //     const y = e.touches[0].clientY
-
-  //     const area = this.gameinfo.btnArea
-
-  //     if (x >= area.startX
-  //         && x <= area.endX
-  //         && y >= area.startY
-  //         && y <= area.endY) this.restart()
-  //   }
-
-  //   /**
-  //    * canvas重绘函数
-  //    * 每一帧重新绘制所有的需要展示的元素
-  //    */
-  //   render() {
-  //     ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-  //     this.bg.render(ctx)
-
-  //     databus.bullets
-  //       .concat(databus.enemys)
-  //       .forEach((item) => {
-  //         item.drawToCanvas(ctx)
-  //       })
-
-  //     this.player.drawToCanvas(ctx)
-
-  //     databus.animations.forEach((ani) => {
-  //       if (ani.isPlaying) {
-  //         ani.aniRender(ctx)
-  //       }
-  //     })
-
-  //     this.gameinfo.renderGameScore(ctx, databus.score)
-
-  //     // 游戏结束停止帧循环
-  //     if (databus.gameOver) {
-  //       this.gameinfo.renderGameOver(ctx, databus.score)
-
-  //       if (!this.hasEventBind) {
-  //         this.hasEventBind = true
-  //         this.touchHandler = this.touchEventHandler.bind(this)
-  //         canvas.addEventListener('touchstart', this.touchHandler)
-  //       }
-  //     }
-  //   }
-
-  //   // 游戏逻辑更新主函数
-  //   update() {
-  //     if (databus.gameOver) return
-
-  //     this.bg.update()
-
-  //     databus.bullets
-  //       .concat(databus.enemys)
-  //       .forEach((item) => {
-  //         item.update()
-  //       })
-
-  //     this.enemyGenerate()
-
-  //     this.collisionDetection()
-
-  //     if (databus.frame % 20 === 0) {
-  //       this.player.shoot()
-  //       this.music.playShoot()
-  //     }
-  //   }
-
-  //   // 实现游戏帧循环
-  //   loop() {
-  //     databus.frame++
-
-  //     this.update()
-  //     this.render()
-
-  //     this.aniId = window.requestAnimationFrame(
-  //       this.bindLoop,
-  //       canvas
-  //     )
-  //   }
-  // }
+    fitCameraToRect(rect, margin = 0, duration = 0) {
+        if (duration > 0)
+            this.tweens.addCounter({
+                from: 0,
+                to: 1,
+                duration: duration,
+                onUpdate: (tween) => {
+                    const targetZoom = Math.min((this.cameras.main.width - margin) / rect.width, (this.cameras.main.height - margin) / rect.height)
+                    const zoom = this.cameras.main.zoom + (targetZoom - this.cameras.main.zoom) * tween.getValue()
+                    this.cameras.main.setZoom(zoom)
+                },
+            })
+        else {
+            this.cameras.main.setZoom(Math.min((this.cameras.main.width - margin) / rect.width, (this.cameras.main.height - margin) / rect.height))
+        }
+        this.cameras.main.centerOn(rect.x + rect.width * 0.5, rect.y + rect.height * 0.5)
+    }
 }
+
+const config = {
+    type: Phaser.AUTO,
+    width: window.innerWidth,
+    height: window.innerHeight,
+    physics: {
+        default: 'matter',
+        matter: {
+            runner: {
+                isFixed: true,
+                delta: 8,
+            },
+            gravity: {y: 0},
+            // debug: {
+            //     showBody: true,
+            //     showStaticBody: true,
+            //     showVelocity: true,
+            //     showCollisions: true,
+            //     showAxes: true,
+            //     showPositions: true,
+            //     showAngleIndicator: true,
+            // },
+        },
+    },
+    dom: {
+      createContainer: true
+    },
+    parent: 'tank-game',
+    scene: TankGame,
+    scale: {
+        mode: Phaser.Scale.RESIZE,
+        width: '100%',
+        height: '100%',
+    },
+    backgroundColor: '#9393bf',
+}
+if (window.canvas) {
+  config.canvas = window.canvas;
+}
+const game = new Phaser.Game(config)
