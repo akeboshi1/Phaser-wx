@@ -32,8 +32,32 @@ export default class Tank extends Phaser.GameObjects.Container {
         this.setSize(this.tankBody.displayWidth - 10, this.tankBody.displayHeight - 12)
 
         this.inputKeys = inputKeys
-        inputKeys.fire.on('down', (event) => {
+        inputKeys.fire.on('pointerdown', (event) => {
             this.tankTurret.fire()
+        });
+        inputKeys.up.on('pointerdown', (event) => {
+            this.upBoo = true;
+        })
+        inputKeys.up.on('pointerup', (event) => {
+            this.upBoo = false;
+        })
+        inputKeys.down.on('pointerdown', (event) => {
+            this.downBoo = true;
+        })
+        inputKeys.down.on('pointerup', (event) => {
+            this.downBoo = false;
+        })
+        inputKeys.left.on('pointerdown', (event) => {
+            this.leftBoo = true;
+        })
+        inputKeys.left.on('pointerup', (event) => {
+            this.leftBoo = false;
+        })
+        inputKeys.right.on('pointerdown', (event) => {
+            this.rightBoo = true;
+        })
+        inputKeys.right.on('pointerup', (event) => {
+            this.rightBoo = false;
         })
 
         this.motorPower = 0
@@ -62,20 +86,20 @@ export default class Tank extends Phaser.GameObjects.Container {
     preUpdate(time, delta) {
         let throttle = 0
         let throttleRate = 0.05
-        if (this.inputKeys.up.isDown) {
+        if (this.upBoo) {
             throttle += throttleRate
         }
-        if (this.inputKeys.down.isDown) {
+        if (this.downBoo) {
             throttle -= throttleRate
         }
         if (throttle !== 0)
             this.thrustRight(throttle * delta * 0.1)
         let turn = 0
         let turnRate = 0.1
-        if (this.inputKeys.left.isDown) {
+        if (this.leftBoo) {
             turn -= turnRate
         }
-        if (this.inputKeys.right.isDown) {
+        if (this.rightBoo) {
             turn += turnRate
         }
         if (turn !== 0)
