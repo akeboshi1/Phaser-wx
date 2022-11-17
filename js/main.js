@@ -1,4 +1,4 @@
-import "../lib/phaser.js";
+import "./libs/phaser.min";
 import { TankGame } from "./TankGame";
 
 export const TASKGAME = "TASKGAME";
@@ -7,10 +7,24 @@ export const WIDTH = Math.round(window.innerWidth * DPR)
 export const HEIGHT = Math.round(window.innerHeight * DPR)
 export class Main {
     constructor() {
-        this.init();
+        const self = this;
+        wx.loadSubpackage({
+          name: 'raycaster', // 下载其他分包
+          success(res) {
+            import("raycaster/game.js").then((raycaster) => {
+    
+              self.init(raycaster);
+            });
+            console.log('load moduleA success', res)
+          },
+          fail(err) {
+            console.error('load moduleA fail', err)
+          }
+          // export const assetsDPR = roundHalf(Math.min(Math.max(HEIGHT / 360, 1), 4))
+        })
     }
 
-    init() {
+    init(raycaster) {
         const config = {
             type: Phaser.WEBGL,
             width: WIDTH,
@@ -38,19 +52,19 @@ export class Main {
                 createContainer: true
             },
             parent: 'tank-game',
-            scene: [TankGame],
             scale: {
                 mode: Phaser.Scale.FIT,
                 width: WIDTH,
                 height: HEIGHT,
-                zoom: 1 / DPR,
+                zoom: DPR,
             },
             backgroundColor: '#9393bf',
         }
         if (window.canvas) {
             config.canvas = window.canvas;
         }
-        this.game = new Phaser.Game(config)
+        this.game = new Phaser.Game(config);
+        this.game.scene.add(TASKGAME, TankGame, true, { ray:raycaster });
     }
 
 }

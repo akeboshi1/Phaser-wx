@@ -2,13 +2,16 @@ import Maze from './objects/maze'
 import Tank from './objects/tank'
 import Barrel from './objects/barrel'
 import Crate from './objects/crate'
-import Raycaster from "./raycaster/Raycaster.js"
 import { TASKGAME } from "./main";
 
 export class TankGame extends Phaser.Scene {
   constructor(config) {
     super(config);
     this.key = TASKGAME;
+  }
+
+  init(data) {
+    this.ray = data.ray;
   }
 
   preload() {
@@ -63,7 +66,7 @@ export class TankGame extends Phaser.Scene {
     let tracksResolutionDivider = 0.75 / this.cameras.main.zoom
     this.floorRenderTexture = this.add.renderTexture(0, 0, mazeSize.x * tileSize.x / tracksResolutionDivider, mazeSize.y * tileSize.y / tracksResolutionDivider)
     this.floorRenderTexture.setScale(tracksResolutionDivider);
-    this.floorRenderTexture.setPosition(this.floorRenderTexture.width*tracksResolutionDivider >> 1, this.floorRenderTexture.height*tracksResolutionDivider >> 1);
+    this.floorRenderTexture.setPosition(this.floorRenderTexture.width * tracksResolutionDivider >> 1, this.floorRenderTexture.height * tracksResolutionDivider >> 1);
     this.floorRenderTexture.fill(0x9393bf, 1)
 
     this.maze = new Maze(this, mazeSize.x, mazeSize.y, tileSize.x, tileSize.y)
@@ -158,7 +161,7 @@ export class TankGame extends Phaser.Scene {
       spawnCrate()
     }
 
-    this.raycaster = new Raycaster()
+    this.raycaster = new this.ray.RayCaster()
     this.maze.walls.forEach(wall => {
       this.raycaster.addObstacle(wall)
     })

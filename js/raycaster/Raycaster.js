@@ -6,7 +6,7 @@ const Line = Phaser.Geom.Line;
 const SetToAngle = Phaser.Geom.Line.SetToAngle;
 const ReflectAngle = Phaser.Geom.Line.ReflectAngle;
 
-class Reflection {
+export class RayCaster {
     constructor(config) {
         this.obstacles = new Obstacles();
         this.ray = new Line();
@@ -107,5 +107,3 @@ class Reflection {
         return this.hitTest();
     }
 }
-
-export default Reflection;
