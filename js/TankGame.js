@@ -1,4 +1,3 @@
-import "./libs/phaser.min";
 import Maze from './objects/maze'
 import Tank from './objects/tank'
 import Barrel from './objects/barrel'
@@ -63,7 +62,8 @@ export class TankGame extends Phaser.Scene {
 
     let tracksResolutionDivider = 0.75 / this.cameras.main.zoom
     this.floorRenderTexture = this.add.renderTexture(0, 0, mazeSize.x * tileSize.x / tracksResolutionDivider, mazeSize.y * tileSize.y / tracksResolutionDivider)
-    this.floorRenderTexture.setScale(tracksResolutionDivider)
+    this.floorRenderTexture.setScale(tracksResolutionDivider);
+    this.floorRenderTexture.setPosition(this.floorRenderTexture.width*tracksResolutionDivider >> 1, this.floorRenderTexture.height*tracksResolutionDivider >> 1);
     this.floorRenderTexture.fill(0x9393bf, 1)
 
     this.maze = new Maze(this, mazeSize.x, mazeSize.y, tileSize.x, tileSize.y)
@@ -180,7 +180,7 @@ export class TankGame extends Phaser.Scene {
       floorDecal.setPosition(Phaser.Math.RND.realInRange(0, mazeSize.x * tileSize.x), Phaser.Math.RND.realInRange(0, mazeSize.y * tileSize.y))
       floorDecal.setAngle(Phaser.Math.RND.angle())
       floorDecal.setScale(Phaser.Math.RND.between(1, 5))
-      floorDecal.setAlpha(Phaser.Math.RND.realInRange(0, 0.5))
+      floorDecal.setAlpha(Phaser.Math.RND.realInRange(0, 1))
       this.floorRenderTexture.draw(floorDecal)
     }
     floorDecal.destroy()
@@ -196,7 +196,7 @@ export class TankGame extends Phaser.Scene {
       this.scene.restart()
     })
 
-    this.debug = this.add.text(-22, -90, '', { font: '64px Roboto', fill: '#2f2c23' })
+    this.debug = this.add.text(0, 0, '', { font: '64px Roboto', fill: '#2f2c23' })
 
     this.scale.on('resize', (gameSize, baseSize, displaySize, resolution) => {
       this.fitCameraToRect({

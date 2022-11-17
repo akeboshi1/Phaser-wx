@@ -19,7 +19,7 @@ class Spark extends Phaser.GameObjects.Sprite {
     }
 }
 
-export default class Shell extends Phaser.Physics.Matter.Sprite {
+export class Shell extends Phaser.Physics.Matter.Sprite {
     constructor(scene, x, y,
                 angle,
                 initialVelocity = new Phaser.Math.Vector2(0, 0),

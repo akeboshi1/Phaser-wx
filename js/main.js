@@ -1,5 +1,5 @@
-import "./libs/phaser.min";
-import {TankGame} from "./TankGame";
+import "../lib/phaser.js";
+import { TankGame } from "./TankGame";
 
 export const TASKGAME = "TASKGAME";
 export const DPR = Number(window.devicePixelRatio.toFixed(1));
@@ -13,6 +13,8 @@ export class Main {
     init() {
         const config = {
             type: Phaser.WEBGL,
+            width: WIDTH,
+            height: HEIGHT,
             physics: {
                 default: 'matter',
                 matter: {
@@ -48,7 +50,7 @@ export class Main {
         if (window.canvas) {
             config.canvas = window.canvas;
         }
-        const game = new Phaser.Game(config)
+        this.game = new Phaser.Game(config)
     }
 
 }

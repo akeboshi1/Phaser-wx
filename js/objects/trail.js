@@ -6,7 +6,7 @@ class Point {
     }
 }
 
-export default class Trail extends Phaser.GameObjects.Graphics {
+export  class Trail extends Phaser.GameObjects.Graphics {
     constructor(scene) {
         super(scene)
         this.points = []

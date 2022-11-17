@@ -1,5 +1,6 @@
 import Laser from "./laser"
 import Explosion from "../explosion"
+import { DPR } from "../../main"
 
 export default class LaserTurret extends Phaser.GameObjects.Container {
     constructor(scene, x, y, tank, color = 'blue') {
