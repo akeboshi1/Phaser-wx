@@ -1,7 +1,9 @@
 import "./libs/phaser.min";
 import { TankGame } from "./TankGame";
+import { UIScene } from "./uiScene";
 
 export const TASKGAME = "TASKGAME";
+export const UISCENE = "UISCENE";
 export const DPR = Number(window.devicePixelRatio.toFixed(1));
 export const WIDTH = Math.round(window.innerWidth * DPR)
 export const HEIGHT = Math.round(window.innerHeight * DPR)
@@ -9,18 +11,18 @@ export class Main {
     constructor() {
         const self = this;
         wx.loadSubpackage({
-          name: 'raycaster', // 下载其他分包
-          success(res) {
-            import("raycaster/game.js").then((raycaster) => {
-    
-              self.init(raycaster);
-            });
-            console.log('load moduleA success', res)
-          },
-          fail(err) {
-            console.error('load moduleA fail', err)
-          }
-          // export const assetsDPR = roundHalf(Math.min(Math.max(HEIGHT / 360, 1), 4))
+            name: 'raycaster', // 下载其他分包
+            success(res) {
+                import("raycaster/game.js").then((raycaster) => {
+
+                    self.init(raycaster);
+                });
+                console.log('load moduleA success', res)
+            },
+            fail(err) {
+                console.error('load moduleA fail', err)
+            }
+            // export const assetsDPR = roundHalf(Math.min(Math.max(HEIGHT / 360, 1), 4))
         })
     }
 
@@ -64,7 +66,9 @@ export class Main {
             config.canvas = window.canvas;
         }
         this.game = new Phaser.Game(config);
-        this.game.scene.add(TASKGAME, TankGame, true, { ray:raycaster });
+       
+        this.game.scene.add(UISCENE, UIScene, true);
+        this.game.scene.add(TASKGAME, TankGame, true, { ray: raycaster });
     }
 
 }

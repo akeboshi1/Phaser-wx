@@ -2,8 +2,7 @@ import Maze from './objects/maze'
 import Tank from './objects/tank'
 import Barrel from './objects/barrel'
 import Crate from './objects/crate'
-import { TASKGAME } from "./main";
-
+import { TASKGAME, UISCENE } from "./main";
 export class TankGame extends Phaser.Scene {
   constructor(config) {
     super(config);
@@ -120,37 +119,13 @@ export class TankGame extends Phaser.Scene {
     //     fire: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE),
     // })
 
-    this.mAttack = this.add.graphics({ x: 100, y: 650 });
-    this.mAttack.fillStyle(0xffccff, 1);
-    this.mAttack.fillRect(0, 0, 50, 50).setInteractive(new Phaser.Geom.Rectangle(0, 0, 50, 50), Phaser.Geom.Rectangle.Contains);
-
-    this.mUp = this.add.graphics({ x: 100, y: 600 });
-    this.mUp.fillStyle(0x0000, 1);
-    this.mUp.fillRect(0, 0, 50, 50).setInteractive(new Phaser.Geom.Rectangle(0, 0, 50, 50), Phaser.Geom.Rectangle.Contains);
-    // this.mUp.on("pointerdown", this.pointerDownHandler, this);
-
-    this.mLeft = this.add.graphics({ x: 0, y: 650 });
-    this.mLeft.fillStyle(0xffcc00, 1);
-    this.mLeft.fillRect(0, 0, 50, 50).setInteractive(new Phaser.Geom.Rectangle(0, 0, 50, 50), Phaser.Geom.Rectangle.Contains);
-    // this.mLeft.on("pointerdown", this.pointerAttackHandler, this);
-
-
-    this.mDown = this.add.graphics({ x: 100, y: 700 });
-    this.mDown.fillStyle(0xffffff, 1);
-    this.mDown.fillRect(0, 0, 50, 50).setInteractive(new Phaser.Geom.Rectangle(0, 0, 50, 50), Phaser.Geom.Rectangle.Contains);
-    // this.mDown.on("pointerdown", this.pointerShareHandler, this);
-
-    this.mRight = this.add.graphics({ x: 200, y: 650 });
-    this.mRight.fillStyle(0x00ff00, 1);
-    this.mRight.fillRect(0, 0, 50, 50).setInteractive(new Phaser.Geom.Rectangle(0, 0, 50, 50), Phaser.Geom.Rectangle.Contains);
-    // this.mRight.on("pointerdown", this.pointerMusicHandler, this);
+    const uiscene = this.game.scene.getScene(UISCENE);
     spawnTank('blue', {
-
-      up: this.mUp,
-      left: this.mLeft,
-      down: this.mDown,
-      right: this.mRight,
-      fire: this.mAttack// .keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT),
+      up: uiscene.mUp,
+      left: uiscene.mLeft,
+      down: uiscene.mDown,
+      right: uiscene.mRight,
+      fire: uiscene.mAttack// .keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT),
     })
 
     for (let i = 0; i < Math.pow(mazeSize.x * mazeSize.y, 0.5) + Phaser.Math.RND.between(-2, 3); i++) {
