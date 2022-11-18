@@ -1,1 +1,1 @@
-export {RayCaster} from "./raycaster";
+export {RayCaster} from "./Raycaster.min";
