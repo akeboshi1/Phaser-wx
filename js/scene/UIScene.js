@@ -1,6 +1,4 @@
 import { UISCENE } from "../main";
-import Music from "../utils/music";
-
 export class UIScene extends Phaser.Scene {
     constructor() {
         super();
