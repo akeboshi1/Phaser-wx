@@ -1,4 +1,4 @@
-# phaser3 for wechat game test demo
+# phaser3 for wechat game project
 ## Currently Using Phaser3 Build
 v3.55.2
 ## phaser适配：
